@@ -8,18 +8,16 @@
 
 #define Extend(n) (n == 0 ? 8 : (n*2))
 
+// f(a, b, c)
+
 typedef enum {
     NUMBER,             // number, float 
     IDENTIFIER,         // alphabetic identifier
 
-    PLUS,               // +
-    MINUS,              // -
-    STAR,               // *
-    SLASH,              // /
-    WEDGE,              // ^
-
     OPEN_PAREN,         // (
     CLOSE_PAREN,        // )
+    COMMA,              // ,
+    DERIVE,             // =>
 } TokenType;
 
 typedef struct {
@@ -30,12 +28,13 @@ typedef struct {
 
 typedef struct {
     size_t count;
-    size_t length;
+    size_t cap;
+    char* input;
     Token* tokens;
 } TokenList;
 
-void lex(TokenList* list, char* input);
-void print_token(const char* input, Token* token);
+void lex(TokenList* list);
+void print_tokens(TokenList* list);
 void destroy_tokens(TokenList* list);
 
 #endif //_LEXER_H

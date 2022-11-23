@@ -1,9 +1,9 @@
 #include "lexer.h"
 
 void push_token(TokenList* list, Token token){
-    if (list->count >= list->length) {
-        list->length = Extend(list->length);
-        list->tokens = realloc(list->tokens, sizeof(Token) * list->length);
+    if (list->count >= list->cap) {
+        list->cap = Extend(list->cap);
+        list->tokens = realloc(list->tokens, sizeof(Token) * list->cap);
     }
 
     list->tokens[list->count++] = token;
@@ -30,18 +30,19 @@ size_t push_identifier(TokenList* list, char* c, size_t start){
     return count;
 }
 
-void lex(TokenList* list, char* input){
-    size_t input_length = strlen(input);
+void lex(TokenList* list){
+    size_t input_length = strlen(list->input);
     size_t index = 0;
     while (index < input_length) {
-        char* c = input + index;
+        char* c = list->input + index;
         switch (*c) {
-            case '+': push_token(list, (Token){PLUS,  index, 1}); index++; break;
-            case '-': push_token(list, (Token){MINUS, index, 1}); index++; break;
-            case '*': push_token(list, (Token){STAR,  index, 1}); index++; break;
-            case '/': push_token(list, (Token){SLASH, index, 1}); index++; break;
-            case '^': push_token(list, (Token){WEDGE, index, 1}); index++; break;
-
+            case ',': push_token(list, (Token){COMMA, index, 1}); index++; break;
+            case '=': {
+                if (c[1] == '>') {
+                    push_token(list, (Token){COMMA, index, 2}); 
+                    index+=2;
+                }
+            } break;
             case '(': push_token(list, (Token){OPEN_PAREN,  index, 1}); index++; break;
             case ')': push_token(list, (Token){CLOSE_PAREN, index, 1}); index++; break;
             
@@ -58,16 +59,25 @@ void lex(TokenList* list, char* input){
     }
 }
 
-void print_token(const char* input, Token* token){
-    switch (token->type){
-        case NUMBER:     printf("Number: <"); break;
-        case IDENTIFIER: printf("Identifier: <"); break;
-        default:         printf("Symbol: <"); break;
+void print_tokens(TokenList* list){
+    
+    for (size_t i = 0; i < list->count; i++) {
+        Token token = list->tokens[i];
+        switch (token.type){
+            case NUMBER:      printf("Number:      '"); break;
+            case IDENTIFIER:  printf("Identifier:  '"); break;
+            case COMMA:       printf("Comma:       '"); break;
+            case OPEN_PAREN:  printf("Open paren:  '"); break;
+            case CLOSE_PAREN: printf("Close paren: '"); break;
+            case DERIVE:      printf("Derivation:  '"); break;
+            default: break;
+        }
+        for (size_t i = token.start; i < token.start+token.count; i++){
+            printf("%c", list->input[i]);
+        }
+        printf("'\n"); 
     }
-    for (size_t i = token->start; i < token->start+token->count; i++){
-        printf("%c", input[i]);
-    }
-    printf(">\n"); 
+    
 }
 
 void destroy_tokens(TokenList* list){

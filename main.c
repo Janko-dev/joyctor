@@ -1,15 +1,17 @@
 #include <stdio.h>
 #include "lexer.h"
+#include "parser.h"
 
 int main(void){
 
     TokenList list = {0};
-    char* input = ".67x + 2 * (5 + (23)^(2x))  - 800";
-    lex(&list, input);
-
-    for (size_t i = 0; i < list.count; i++) {
-        print_token(input, list.tokens + i);
-    }
+    char* input = "f(a, b, c) => g(b)";
+    list.input = input;
+    lex(&list);
+    
+    // print_tokens(&list);
+    Expr* e = parse(&list);
+    printf("Type: %d\n", e->type);
 
     destroy_tokens(&list);
 

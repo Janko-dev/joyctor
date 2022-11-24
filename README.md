@@ -1,2 +1,2 @@
 # joyctor
-Functors are fun, matching functors brings joy 
+Functors are fun, pattern matching functors brings joy 

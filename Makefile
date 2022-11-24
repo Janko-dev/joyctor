@@ -1,6 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11 -g
-IN = parser.c lexer.c main.c
+SRC = src/
+IN = $(SRC)runtime.c $(SRC)parser.c $(SRC)lexer.c $(SRC)main.c
 OUT = funcr
 
 default:

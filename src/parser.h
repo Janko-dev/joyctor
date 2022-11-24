@@ -30,14 +30,16 @@ typedef struct {
 
 struct Expr{
     ExprType type;
+    char* input;
     union {
         Functor functor;
         Primary primary;
         Binary  binary;
-    };
+    } as;
 };
 
 Expr* parse(TokenList* list);
+void print_expr(Expr* expr);
 void destroy_expr(Expr* expr);
 
 

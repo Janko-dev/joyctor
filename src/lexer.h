@@ -34,6 +34,7 @@ typedef struct {
 } TokenList;
 
 void lex(TokenList* list);
+void print_token(char* input, Token* token);
 void print_tokens(TokenList* list);
 void destroy_tokens(TokenList* list);
 

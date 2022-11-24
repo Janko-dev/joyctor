@@ -39,20 +39,22 @@ void lex(TokenList* list){
             case ',': push_token(list, (Token){COMMA, index, 1}); index++; break;
             case '=': {
                 if (c[1] == '>') {
-                    push_token(list, (Token){COMMA, index, 2}); 
+                    push_token(list, (Token){DERIVE, index, 2}); 
                     index+=2;
                 }
             } break;
             case '(': push_token(list, (Token){OPEN_PAREN,  index, 1}); index++; break;
             case ')': push_token(list, (Token){CLOSE_PAREN, index, 1}); index++; break;
             
-            case ' ': case '\t': case '\r': index++; break;
+            case ' ': case '\t': case '\r': case '\n': index++; break;
 
             default: {
                 if (isdigit(*c) || *c == '.') {
                     index += push_digit(list, c, index);
                 } else if (isalpha(*c)){
                     index += push_identifier(list, c, index);
+                } else {
+                    index++;
                 }
             } break;
         }
@@ -62,8 +64,8 @@ void lex(TokenList* list){
 void print_tokens(TokenList* list){
     
     for (size_t i = 0; i < list->count; i++) {
-        Token token = list->tokens[i];
-        switch (token.type){
+        Token* token = list->tokens + i;
+        switch (token->type){
             case NUMBER:      printf("Number:      '"); break;
             case IDENTIFIER:  printf("Identifier:  '"); break;
             case COMMA:       printf("Comma:       '"); break;
@@ -72,12 +74,15 @@ void print_tokens(TokenList* list){
             case DERIVE:      printf("Derivation:  '"); break;
             default: break;
         }
-        for (size_t i = token.start; i < token.start+token.count; i++){
-            printf("%c", list->input[i]);
-        }
+        print_token(list->input, token);
         printf("'\n"); 
+    }   
+}
+
+void print_token(char* input, Token* token){
+    for (size_t i = token->start; i < token->start+token->count; i++){
+        printf("%c", input[i]);
     }
-    
 }
 
 void destroy_tokens(TokenList* list){
